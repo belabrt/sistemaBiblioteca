@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Usuario {
@@ -33,11 +34,10 @@ public class Usuario {
     public void setTemMulta(boolean novoValor){
         this.temMulta = novoValor;
     }
-    public void setEmprestimo(Emprestimo emprestimo) {
-        this.emprestimo = emprestimo;
+    public void setEmprestimo(String dataEmprestimo, int qteObras, String[] obras, String status) {
+        this.emprestimo = new Emprestimo(dataEmprestimo, qteObras, obras, status);
     }
    
-
     public String getNome(){
         return this.nome;
     }
@@ -53,18 +53,32 @@ public class Usuario {
     public boolean getTemMulta(){
         return this.temMulta;
     }
-    /* 
+    public Emprestimo getEmprestimo() {
+        return emprestimo;
+    }
+    
     public void receberPagamento(float valor, int formaPgto){
-
+        this.pgto = new Pagamento(valor, formaPgto);
+        emprestimo.setStatus("finalizado");
+        this.setTemMulta(false);
+        emprestimo.setDataDevolvido(null);
     }
     
     public float verificarMulta(){
+        if (emprestimo.temAtraso()){
+            this.setTemMulta(true);
+            return emprestimo.calcularTotal();
+        }
+        else
+            return 0;
         
     }
 
-    public void registrarDevolucao(Obra obras[], Date data){
-        
-    }*/
+    public void registrarDevolucao(String[] obras, String data){
+        if (emprestimo.getStatus() == "ativo"){
+            emprestimo.devolverObras(obras, data);
+        }
+    }
 
     @Override
     public String toString() {

@@ -5,15 +5,18 @@ public abstract class Obra {
     protected int qteExistentes;
     protected int qteDisponiveis;
 
-    public Obra(boolean disponivel, int qteExistentes, int qteDisponiveis, String titulo){
-        this.setDisponivel(disponivel);
+    public Obra(int qteExistentes, int qteDisponiveis, String titulo){
         this.setQteExistentes(qteExistentes);
         this.setQteDisponiveis(qteDisponiveis);
         this.setTitulo(titulo);
+        this.setDisponivel();
     }
 
-    public void setDisponivel(boolean disponivel) {
-        this.disponivel = disponivel;
+    public void setDisponivel() {
+        if (qteDisponiveis > 0)
+            this.disponivel = true;
+        else   
+            this.disponivel = false;
     }
     public void setQteExistentes(int qteExistentes) {
         this.qteExistentes = qteExistentes;

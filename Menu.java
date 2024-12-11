@@ -1,4 +1,10 @@
+/*
+ * Trabalho realizado para a disciplina de Design de Software 
+ * Aluna: Isabela da Silva Barata GRR20213395
+ * Data: 11/12/2024
+ */
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Menu{
@@ -7,9 +13,9 @@ public class Menu{
         int opcao = 0;
         Biblioteca biblioteca = new Biblioteca();
         System.out.println("\n********* SISTEMA DA BIBLIOTECA ********\n");
-        while (opcao != 6){
+        while (opcao != 5){
             System.out.println("\nSelecione o que deseja fazer:\n" +
-                                "1 - Cadastrar uma obra\n" + 
+                                "1 - Cadastrar ou adicionar uma obra\n" + 
                                 "2 - Registrar uma devolução\n" +
                                 "3 - Registrar um empréstimo\n" +
                                 "4 - Pesquisar uma obra\n" +
@@ -37,7 +43,7 @@ public class Menu{
                         System.out.println("Informe o ano de publicação do livro: ");
                         int anoPublicacao = input.nextInt();
                         input.nextLine();
-                        System.out.println("Informe a quantidade de unidades: ");
+                        System.out.println("Informe a quantidade de unidades que deseja adicionar: ");
                         int quantidade = input.nextInt();
                         input.nextLine();
                         biblioteca.cadastrarObraLivro(quantidade, titulo, autor, anoPublicacao, editora);
@@ -54,7 +60,7 @@ public class Menu{
                         System.out.println("Informe o ano de publicação do periódico: ");
                         int ano = input.nextInt();
                         input.nextLine();
-                        System.out.println("Informe a quantidade de unidades: ");
+                        System.out.println("Informe a quantidade de unidades que deseja adicionar: ");
                         int quantidade = input.nextInt();
                         input.nextLine();
                         biblioteca.cadastrarObraPeriodico(quantidade, titulo, mes, ano, volume);
@@ -75,10 +81,18 @@ public class Menu{
                     String[] obrasDevolucao = new String[qteDevolvidas];
                     for (int i = 0; i < qteDevolvidas; i++)
                         obrasDevolucao[i] = input.nextLine();
-                    System.out.println("Informe a data da devolução: ");
-                    LocalDate dataDevolucao = LocalDate.parse(input.nextLine());
+                    System.out.println("Informe a data da devolução, no formato dd/mm/aaaa: ");
+                    String dataDevolucao = input.nextLine();
 
-                    biblioteca.registrarDevolucao(documentoDevolucao, obrasDevolucao, dataDevolucao);
+                    float multa = biblioteca.registrarDevolucao(documentoDevolucao, obrasDevolucao, dataDevolucao);
+                    if(multa > 0){
+                        System.out.println("O usuário possui multa de R$" + multa);
+                        System.out.println("\nInforme a forma de pagamento: \n" +
+                                            "1 - para cartão\n" +
+                                            "2 - para dinheiro ou pix\n");
+                        int formaPgto = input.nextInt();
+                        biblioteca.receberPagamento(documentoDevolucao, multa, formaPgto, dataDevolucao, obrasDevolucao);
+                    }
                     break;
 
                 //REGISTRAR EMPRÉSTIMO -------------------------------------------------------------------------------------------------------
@@ -99,13 +113,17 @@ public class Menu{
                     System.out.println("\nInforme a quantidade de obras a serem emprestadas: ");
                     int qteObrasEmprestadas = input.nextInt();
                     input.nextLine();
+                    if (qteObrasEmprestadas > 3){
+                        System.out.println("Não é possível emprestar mais que 3 obras por vez.\n");
+                        break;
+                    }
                     System.out.println("Informe o nome das obras a serem emprestadas: ");
                     String[] obrasEmprestimo = new String[qteObrasEmprestadas];
                     for (int i = 0; i < qteObrasEmprestadas; i++)
                         obrasEmprestimo[i] = input.nextLine();
-                    System.out.println("Informe a data do empréstimo: ");
-                    LocalDate dataEmprestimo = LocalDate.parse(input.nextLine());
-
+                    System.out.println("Informe a data do empréstimo, no formato dd/mm/aaaa: ");
+                    String dataEmprestimo = input.nextLine();
+                    
                     biblioteca.realizarEmprestimo(qteObrasEmprestadas, obrasEmprestimo, documentoEmprestimo, dataEmprestimo);
 
                     break;
@@ -117,6 +135,7 @@ public class Menu{
                                         "2 - Periódico\n");
                     int tipoPesquisa = input.nextInt();
                     input.nextLine();
+                    String[] dados = new String[2];
                     if (tipoPesquisa == 1){
                         System.out.println("Digite:\n" +
                                             "1 - para pesquisar livro por título\n" +
@@ -125,20 +144,18 @@ public class Menu{
                         input.nextLine();
                         if (opcaoLivro == 1){
                             System.out.println("Digite o título do livro: ");
-                            String tituloLivro = input.nextLine();
-                            biblioteca.PesquisarObraLivro(opcaoLivro, tituloLivro);
+                            dados[0] = input.nextLine();
                         }else{
                             System.out.println("Digite o nome do autor do livro: ");
-                            String autorLivro = input.nextLine();
-                            biblioteca.PesquisarObraLivro(opcaoLivro, autorLivro);
+                            dados[0] = input.nextLine();
                         }
+                        biblioteca.PesquisarObra(tipoPesquisa, opcaoLivro, dados);
                     }else if (tipoPesquisa == 2){
                         System.out.println("Digite:\n" +
                                             "1 - para pesquisar periódico por título\n" +
                                             "2 - para pesquisar periódico por título e ano\n");
                         int opcaoPeriodico = input.nextInt();
                         input.nextLine();
-                        String[] dados = new String[2];
                         if (opcaoPeriodico == 1){
                             System.out.println("Digite o título do periódico: ");
                             dados[0] = input.nextLine();
@@ -148,7 +165,7 @@ public class Menu{
                             System.out.println("Digite o ano do periódico: ");
                             dados[1] = input.nextLine();
                         }
-                        biblioteca.PesquisarObraPeriodico(opcaoPeriodico, dados);
+                        biblioteca.PesquisarObra(tipoPesquisa, opcaoPeriodico, dados);
                     }else{
                         System.out.println("Tipo de obra inválido!");
                     }
@@ -163,17 +180,6 @@ public class Menu{
                     break;
             }
         }
-        
-
-
-
-
-
-
-
-
-
-
 
     }
 }

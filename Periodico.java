@@ -4,8 +4,8 @@ public class Periodico extends Obra{
     private int ano;
     private int mes;
 
-    public Periodico (boolean disponivel, int qteExistentes, int qteDisponiveis, String titulo, int volume, int ano, int mes){
-        super(disponivel, qteExistentes, qteDisponiveis, titulo);
+    public Periodico (int qteExistentes, int qteDisponiveis, String titulo, int volume, int ano, int mes){
+        super( qteExistentes, qteDisponiveis, titulo);
         this.setAno(ano);
         this.setMes(mes);
         this.setVolume(volume);

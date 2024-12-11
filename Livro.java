@@ -3,8 +3,8 @@ public class Livro extends Obra{
     private String editora;
     private int anoPublicacao;
 
-    public Livro(boolean disponivel, int qteExistentes, int qteDisponiveis, String titulo, String autor, String editora, int anoPublicacao){
-        super(disponivel, qteExistentes, qteDisponiveis, titulo);
+    public Livro( int qteExistentes, int qteDisponiveis, String titulo, String autor, String editora, int anoPublicacao){
+        super( qteExistentes, qteDisponiveis, titulo);
         this.setAutor(autor);
         this.setEditora(editora);
         this.setAnoPublicacao(anoPublicacao);
